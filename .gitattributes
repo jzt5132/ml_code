@@ -1,3 +1,5 @@
+# https://code.visualstudio.com/docs/remote/troubleshooting
+# Resolving Git line ending issues in WSL (resulting in many modified files)
 * text=auto eol=lf
 *.{cmd,[cC][mM][dD]} text eol=crlf
 *.{bat,[bB][aA][tT]} text eol=crlf
