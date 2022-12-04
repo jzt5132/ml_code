@@ -1,3 +1,11 @@
+
++-------------------+
+| Data Manipulation |
++-------------------+
+
+...read order and user data...
+
+...check original order_data...
 +----+------+--------------+-------+----------------+----------+
 |    |   id | ts           |   uid |        orderid |   amount |
 |----+------+--------------+-------+----------------+----------|
@@ -22,6 +30,8 @@
 | 18 |   19 | 8/3/19 10:08 | 10003 | 20190803100858 |    50.4  |
 | 19 |   20 | 8/3/19 12:08 | 10009 | 20190803120818 |    47.99 |
 +----+------+--------------+-------+----------------+----------+
+
+...print original user_data...
 +----+------+-------+------------+-------+
 |    |   id |   uid | username   |   age |
 |----+------+-------+------------+-------|
@@ -52,6 +62,10 @@
 |  9 |   10 | 8/2/19 15:18 | 10001 | 20190802151834 |    71.38 |
 +----+------+--------------+-------+----------------+----------+
 
++------------------+
+| Column Selection |
++------------------+
+
 ...check orderid and amount columns...
 +----+-------------+----------+
 |    |     orderid |   amount |
@@ -78,17 +92,34 @@
 | 19 | 2.01908e+13 |    47.99 |
 +----+-------------+----------+
 
-...get unique vales...
++-----------------+
+| Unique Values   |
++-----------------+
+---SQL---
+select distinct orderid
+from order_data
 [20190801091540 20190801100006 20190801121742 20190801140515
  20190801140529 20190802081315 20190802111424 20190802131801
  20190802151834 20190802160014 20190802170356 20190802171115
  20190802190518 20190802200717 20190802200816 20190802201002
  20190803090247 20190803100858 20190803120818]
 
- count distinct...
++-----------------+
+| Count Distinct  |
++-----------------+
+---SQL---
+select count(distinct orderid) 
+from order_data
+
 19
 
- filter data...
++------------------+
+| Filter Operation |
++------------------+
+---SQL---
+select * 
+from order_data
+where uid = 10003
 +----+------+--------------+-------+----------------+----------+
 |    |   id | ts           |   uid |        orderid |   amount |
 |----+------+--------------+-------+----------------+----------|
@@ -97,6 +128,10 @@
 | 16 |   17 | 8/2/19 20:10 | 10003 | 20190802201002 |    32.01 |
 | 18 |   19 | 8/3/19 10:08 | 10003 | 20190803100858 |    50.4  |
 +----+------+--------------+-------+----------------+----------+
+---SQL---
+select * 
+from order_data
+where uid = 10003 and amount > 50
 +----+------+--------------+-------+----------------+----------+
 |    |   id | ts           |   uid |        orderid |   amount |
 |----+------+--------------+-------+----------------+----------|
@@ -104,6 +139,10 @@
 | 11 |   12 | 8/2/19 17:03 | 10003 | 20190802170356 |    79.33 |
 | 18 |   19 | 8/3/19 10:08 | 10003 | 20190803100858 |    50.4  |
 +----+------+--------------+-------+----------------+----------+
+---SQL---
+select * 
+from order_data
+where uid = 10003 or amount > 50
 +----+------+--------------+-------+----------------+----------+
 |    |   id | ts           |   uid |        orderid |   amount |
 |----+------+--------------+-------+----------------+----------|
@@ -122,14 +161,18 @@
 | 16 |   17 | 8/2/19 20:10 | 10003 | 20190802201002 |    32.01 |
 | 18 |   19 | 8/3/19 10:08 | 10003 | 20190803100858 |    50.4  |
 +----+------+--------------+-------+----------------+----------+
-
- select * from order_data where uid is null...
+---SQL---
+select * 
+from order_data
+where uid is null
 +------+------+-------+-----------+----------+
 | id   | ts   | uid   | orderid   | amount   |
 |------+------+-------+-----------+----------|
 +------+------+-------+-----------+----------+
-
- select * from order_data where uid is not null...
+---SQL---
+select * 
+from order_data
+where uid is not null
 +----+------+--------------+-------+----------------+----------+
 |    |   id | ts           |   uid |        orderid |   amount |
 |----+------+--------------+-------+----------------+----------|
@@ -154,6 +197,14 @@
 | 18 |   19 | 8/3/19 10:08 | 10003 | 20190803100858 |    50.4  |
 | 19 |   20 | 8/3/19 12:08 | 10009 | 20190803120818 |    47.99 |
 +----+------+--------------+-------+----------------+----------+
+
++-----------------+
+| Group Operation |
++-----------------+
+---SQL---
+select uid, count(distinct orderid) 
+from order_data
+group by uid
 +----+-------+-----------+
 |    |   uid |   orderid |
 |----+-------+-----------|
@@ -165,6 +216,10 @@
 |  5 | 10008 |         1 |
 |  6 | 10009 |         4 |
 +----+-------+-----------+
+---SQL---
+select uid, count(orderid) 
+from order_data
+group by uid
 +----+-------+-----------+
 |    |   uid |   orderid |
 |----+-------+-----------|
@@ -176,8 +231,12 @@
 |  5 | 10008 |         1 |
 |  6 | 10009 |         4 |
 +----+-------+-----------+
-/home/jovyan/data_manipulation.py:77: FutureWarning: Indexing with multiple keys (implicitly converted to a tuple of keys) will be deprecated, use a list instead.
-  log_table(order_data.groupby("uid")["orderid","amount"].agg({"orderid": np.size,"amount": np.sum }).reset_index(), logger)
+---SQL---
+select uid, count(distinct orderid) as order_cnt, sum(amount) as sum_amount 
+from order_data
+group by uid
+/home/jovyan/data_manipulation.py:142: FutureWarning: Indexing with multiple keys (implicitly converted to a tuple of keys) will be deprecated, use a list instead.
+  log_table(order_data.groupby("uid")["orderid", "amount"].agg(
 +----+-------+-----------+----------+
 |    |   uid |   orderid |   amount |
 |----+-------+-----------+----------|
@@ -189,6 +248,15 @@
 |  5 | 10008 |         1 |    23.1  |
 |  6 | 10009 |         4 |   182.37 |
 +----+-------+-----------+----------+
+
++----------------+
+| Join Operation |
++----------------+
+---SQL---
+select * from user as u 
+left join
+order as o
+on u.uid = o.uid
 +----+--------+-------+------------+-------+--------+--------------+---------------+----------+
 |    |   id_x |   uid | username   |   age |   id_y | ts           |       orderid |   amount |
 |----+--------+-------+------------+-------+--------+--------------+---------------+----------|
@@ -215,6 +283,14 @@
 | 20 |      9 | 10009 | frank      |    20 |     18 | 8/3/19 9:02  |   2.01908e+13 |     2.7  |
 | 21 |      9 | 10009 | frank      |    20 |     20 | 8/3/19 12:08 |   2.01908e+13 |    47.99 |
 +----+--------+-------+------------+-------+--------+--------------+---------------+----------+
+
++-----------------+
+| Union Operation |
++-----------------+
+---SQL---
+select * from order1
+union
+select * from order2
 +----+------+--------------+-------+----------------+----------+
 |    |   id | ts           |   uid |        orderid |   amount |
 |----+------+--------------+-------+----------------+----------|
@@ -239,6 +315,15 @@
 | 18 |   19 | 8/3/19 10:08 | 10003 | 20190803100858 |    50.4  |
 | 19 |   20 | 8/3/19 12:08 | 10009 | 20190803120818 |    47.99 |
 +----+------+--------------+-------+----------------+----------+
+
++-----------------+
+| Order Operation |
++-----------------+
+---SQL---
+select uid, count(distinct orderid)
+from order_data
+group by uid
+order by count(distinct orderid) desc
 +----+-------+-----------+
 |    |   uid |   orderid |
 |----+-------+-----------|
@@ -250,8 +335,13 @@
 |  5 | 10004 |         1 |
 |  6 | 10008 |         1 |
 +----+-------+-----------+
-/home/jovyan/data_manipulation.py:108: FutureWarning: Indexing with multiple keys (implicitly converted to a tuple of keys) will be deprecated, use a list instead.
-  res_df = order_data.groupby("uid")["orderid", "amount"].agg({"orderid":np.size, "amount":np.sum}).reset_index().rename(columns={"orderid": "order_cnt", "amount": "amount_sum"}).sort_values(by=["uid", "amount_sum"], ascending=[False, True])
+---SQL---
+select uid, count(distinct orderid), sum(amount)
+from order_data
+group by uid
+order by uid desc, sum(amount)
+/home/jovyan/data_manipulation.py:200: FutureWarning: Indexing with multiple keys (implicitly converted to a tuple of keys) will be deprecated, use a list instead.
+  res_df = order_data.groupby("uid")["orderid", "amount"].agg({"orderid": np.size, "amount": np.sum}).reset_index().rename(
 +----+-------+-------------+--------------+
 |    |   uid |   order_cnt |   amount_sum |
 |----+-------+-------------+--------------|
@@ -263,6 +353,23 @@
 |  1 | 10002 |           2 |        59.94 |
 |  0 | 10001 |           4 |       329.98 |
 +----+-------+-------------+--------------+
+
++---------------------+
+| Case When Operation |
++---------------------+
+---SQL---
+select uid, order_cnt,
+case when sum_amount < 300 then '[0, 300]'
+     when sum_amount >= 300 and sum_amount < 600 then '[300, 600]'
+     when sum_amount >= 600 and sum_amount < 900 then '[600, 900]'
+else 'other' end as amt_interval
+from
+(
+   select uid, count(distinct orderid) as order_cnt, sum(amount) as sum_amount
+   from order_data
+   group by uid
+   order by uid desc, sum(amount)
+) as a
 +----+-------+-------------+--------------+----------------+
 |    |   uid |   order_cnt |   amount_sum | amt_interval   |
 |----+-------+-------------+--------------+----------------|
@@ -274,6 +381,14 @@
 |  1 | 10002 |           2 |        59.94 | [0, 300]       |
 |  0 | 10001 |           4 |       329.98 | [300, 600]     |
 +----+-------+-------------+--------------+----------------+
+
++------------------+
+| Update Operation |
++------------------+
+---SQL---
+update user set age = 20
+where age < 20
+
 +----+------+-------+------------+-------+
 |    |   id |   uid | username   |   age |
 |----+------+-------+------------+-------|
@@ -287,6 +402,10 @@
 |  7 |    8 | 10008 | john       |    28 |
 |  8 |    9 | 10009 | frank      |    20 |
 +----+------+-------+------------+-------+
+
++------------------+
+| Delete Operation |
++------------------+
 +----+------+-------+------------+-------+
 |    |   id |   uid | username   |   age |
 |----+------+-------+------------+-------|
@@ -312,6 +431,14 @@
 |  7 |    8 | john       |    28 |
 |  8 |    9 | frank      |    20 |
 +----+------+------------+-------+
+
++-----------------+
+| String Matching |
++-----------------+
+---SQL---
+select *
+from order_data
+where ts like '%8/1%'
 +----+------+--------------+-------+----------------+----------+
 |    |   id | ts           |   uid |        orderid |   amount |
 |----+------+--------------+-------+----------------+----------|
@@ -322,6 +449,13 @@
 |  4 |    5 | 8/1/19 14:05 | 10001 | 20190801140515 |    87.15 |
 |  5 |    6 | 8/1/19 14:05 | 10004 | 20190801140529 |    88.65 |
 +----+------+--------------+-------+----------------+----------+
+
++----------------------+
+| Row_number Operation |
++----------------------+
+---SQL---
+select *, row_number() over (partition by uid order by orderid desc) as rank
+from order_data
 +----+------+--------------+-------+----------------+----------+--------+
 |    |   id | ts           |   uid |        orderid |   amount |   rank |
 |----+------+--------------+-------+----------------+----------+--------|
