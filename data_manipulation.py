@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-from utils import log_table, get_logger_handle
+from logging_utils import log_table, get_logger_handle
 
 logger = get_logger_handle(__name__)
 

@@ -2,7 +2,7 @@
 This module includes helper functions to read csv files
 """
 import pandas as pd
-from utils import get_logger_handle, log_df_summary, log_table
+from logging_utils import get_logger_handle, log_df_summary, log_table
 
 logger = get_logger_handle(__name__)
 

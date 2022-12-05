@@ -7,7 +7,7 @@ from enum import Enum
 import pandas as pd
 from sklearn.model_selection import train_test_split
 import numpy as np
-from utils import get_logger_handle
+from logging_utils import get_logger_handle
 
 
 logger = get_logger_handle(__name__)
@@ -66,7 +66,7 @@ def create_train_test_data(pd_df: pd.DataFrame, dependent_val: str,
 
 if __name__ == "__main__":
     from reader import fetch_data_with_summary
-    from utils import log_df_summary
+    from logging_utils import log_df_summary
     FILE_PATH = "./data/fulldata.dat"
     SEP_STR = r"\s+"
     df = fetch_data_with_summary(FILE_PATH, SEP_STR)
