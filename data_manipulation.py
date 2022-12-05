@@ -4,6 +4,7 @@ from utils import log_table, get_logger_handle
 
 logger = get_logger_handle(__name__)
 
+
 def run_wrapper_func() -> None:
     # read data
     logger.info(
@@ -223,6 +224,7 @@ def run_wrapper_func() -> None:
         "   order by uid desc, sum(amount)\n"
         ") as a"
     )
+
     def get_amt_interval(x):
         if x < 300:
             return '[0, 300]'

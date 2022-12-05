@@ -1,14 +1,21 @@
-import pandas as pd
-from sklearn.model_selection import GroupShuffleSplit, train_test_split
+"""
+This module defines class and methods for machine learning data
+"""
 from typing import Tuple
-import numpy as np
 from dataclasses import dataclass
 from enum import Enum
+import pandas as pd
+from sklearn.model_selection import train_test_split
+import numpy as np
+from utils import get_logger_handle
 
+
+logger = get_logger_handle(__name__)
 
 RANDOM_SEED = 42
 
-class mlDataLabel(Enum):
+
+class MlDataLabel(Enum):
     """
     An Enum class to hold ML data label
     """
@@ -17,7 +24,8 @@ class mlDataLabel(Enum):
     TEST = 2
     UNKNOWN = 100
 
-class mlDataTransform(Enum):
+
+class MlDataTransform(Enum):
     """
     An Enum class to hold tranformation label
     """
@@ -25,41 +33,45 @@ class mlDataTransform(Enum):
     DROP_NA = 1
     FILLNA = 2
     UNKNOWN = 100
-    
+
 
 @dataclass
-class mlData:
+class MlData:
     """
     A class to hold machine learning data
     """
     X: np.ndarray
     y: np.ndarray
-    label: mlDataLabel = mlDataLabel.UNKNOWN
-    tranform: mlDataTransform = mlDataTransform.UNKNOWN
-    
+    label: MlDataLabel = MlDataLabel.UNKNOWN
+    tranform: MlDataTransform = MlDataTransform.UNKNOWN
 
-def create_train_test_data(df: pd.DataFrame, dependent_val: str, test_size: float) -> Tuple(mlData, mlData, mlData):
+
+def create_train_test_data(pd_df: pd.DataFrame, dependent_val: str,
+                           test_size: float) -> Tuple[MlData, MlData, MlData]:
     """
-    This function creats train and test data for 
+    This function creats train and test data for machine learning.
     """
+    X = pd_df.drop(dependent_val, axis=1)
+    y = pd_df[dependent_val]
+    x_train, x_test, y_train, y_test = train_test_split(
+        X, y, test_size=test_size, random_state=RANDOM_SEED)
+    orig_data = MlData(X=X, y=y, label=MlDataLabel.ORIG,
+                       tranform=MlDataTransform.NO_TRANSFORM)
+    train_data = MlData(X=x_train, y=y_train, label=MlDataLabel.TRAIN,
+                        tranform=MlDataTransform.NO_TRANSFORM)
+    test_data = MlData(X=x_test, y=y_test, label=MlDataLabel.TEST,
+                       tranform=MlDataTransform.NO_TRANSFORM)
+    return orig_data, train_data, test_data
 
-    X = df.drop(dependent_val, axis=1)
-    y = df[dependent_val]
-    mlData
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=test_size, random_state=RANDOM_SEED)
-    return 
-
-
-
-"""
-Step 1: Assign independent features (those predicting) to X
-Step 2: Assign classes (labels/dependent features) to y
-Step 3: Divide into training and test setsX_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
-Step 4: Create the modelsvc = SVC()
-Step 5: Fit the modelsvc.fit(X_train, y_train)
-Step 6: Predict with the modely_pred = svc.predict(X_test)
-Step 7: Test the accuracyaccuracy_score(y_test, y_pred)
-"""
 
 if __name__ == "__main__":
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    from reader import fetch_data_with_summary
+    from utils import log_df_summary
+    FILE_PATH = "./data/fulldata.dat"
+    SEP_STR = r"\s+"
+    df = fetch_data_with_summary(FILE_PATH, SEP_STR)
+    log_df_summary(df, logger)
+    ml_data_tuple = create_train_test_data(df, "logRc", 0.2)
+    logger.info("orig data has %s rows", len(ml_data_tuple[0].y))
+    logger.info("train data has %s rows", len(ml_data_tuple[1].y))
+    logger.info("test data has %s rows", len(ml_data_tuple[2].y))
