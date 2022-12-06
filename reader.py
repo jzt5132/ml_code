@@ -15,15 +15,8 @@ def fetch_data_with_summary(file_path: str, sep: str) -> pd.DataFrame:
         pd_df = pd.read_csv(file_path, sep=sep)
     except IOError as ex:
         raise Exception(f"Can not read {file_path}") from ex
-    log_df_summary(df, logger)
+    log_df_summary(pd_df, logger)
     return pd_df
-
-
-def clean_data(pd_df: pd.DataFrame, is_drop: bool = True) -> pd.DataFrame:
-    """
-    handling NA in data. Either drop NA and fill NA values
-    """
-    return pd_df.dropna() if is_drop else pd_df.fillna(pd_df.mean())
 
 
 if __name__ == "__main__":
