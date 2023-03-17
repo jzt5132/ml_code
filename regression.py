@@ -3,7 +3,7 @@
 
 from sklearn.metrics import mean_squared_error, r2_score
 from sklearn.model_selection import cross_val_score
-from sklearn.linear_model import Ridge, Lasso, ElasticNet, LinearRegression
+from sklearn.linear_model import Ridge, Lasso, ElasticNet, LinearRegression, BayesianRidge
 from sklearn.pipeline import make_pipeline
 from sklearn.preprocessing import PolynomialFeatures
 from sklearn.preprocessing import MinMaxScaler
@@ -82,13 +82,13 @@ def cross_validation():
         LinearRegression(), Ridge(
             max_iter=10000), Lasso(
             max_iter=100000), ElasticNet(
-                max_iter=10000)]
+                max_iter=10000), BayesianRidge()]
 
-    names = ['LinearRegression', 'Ridge', 'Lasso', 'ElasticNet']
+    names = ['LinearRegression', 'Ridge', 'Lasso', 'ElasticNet', 'Bayesian']
 
-    markers = ['o', 's', '*', 'X']
+    markers = ['o', 's', '*', 'X', 'd']
 
-    degrees = [1, 2, 3, 4, 5, 6, 7, 8]
+    degrees = [1, 2, 3, 4, 5, 6, 7]
 
     scoring = 'neg_mean_squared_error'
 
@@ -127,7 +127,7 @@ def cross_validation():
 
     plt.yticks(size=18)
 
-    plt.ylim(0.2, 1.7)
+    plt.ylim(0.2, 1.0)
 
     plt.legend(fontsize=14)
 
